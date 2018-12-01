@@ -1261,7 +1261,7 @@ def hurst_rs(data, nvals=None, fit="RANSAC", debug_plot=False,
 
 # TODO implement generalized hurst exponent H_q
 
-def corr_dim(data, emb_dim, rvals=None, dist=rowwise_euclidean,
+def corr_dim(data, emb_dim, lag=1, rvals=None, dist=rowwise_euclidean,
              fit="RANSAC", debug_plot=False, debug_data=False, plot_file=None):
   """
   Calculates the correlation dimension with the Grassberger-Procaccia algorithm
@@ -1355,7 +1355,7 @@ def corr_dim(data, emb_dim, rvals=None, dist=rowwise_euclidean,
     sd = np.std(data)
     rvals = logarithmic_r(0.1 * sd, 0.5 * sd, 1.03)
   n = len(data)
-  orbit = delay_embedding(data, emb_dim, lag=1)
+  orbit = delay_embedding(data, emb_dim, lag=lag)
   dists = np.array([dist(orbit, orbit[i]) for i in range(len(orbit))])
   csums = []
   for r in rvals:
