@@ -1554,11 +1554,11 @@ def dfa(data, nvals=None, overlap=True, order=1, fit_trend="poly",
     # all fluctuations are zero => we cannot fit a line
     poly = [np.nan, np.nan]
   else:
-    poly = poly_fit(np.log(nvals), np.log(fluctuations), 1,
+    poly = poly_fit(np.log10(nvals), np.log10(fluctuations), 1,
                     fit=fit_exp)
   if debug_plot:
-    plot_reg(np.log(nvals), np.log(fluctuations), poly, "log(n)", "std(X,n)",
-             fname=plot_file)
+    plot_reg(np.log10(nvals), np.log10(fluctuations), poly, "log10(n)",
+             "log10(std(X,n))", fname=plot_file)
   if debug_data:
     return (poly[0], (np.log(nvals), np.log(fluctuations), poly))
   else:
