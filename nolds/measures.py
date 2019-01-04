@@ -1379,7 +1379,7 @@ def corr_dim(data, emb_dim, lag=1, rvals=None, dist=rowwise_euclidean,
   else:
     return poly[0]
 
-def dfa(data, nvals=None, overlap=True, order=1, fit_trend="poly",
+def dfa(data, nvals=None, overlap=True, order=1, fit_trend="poly", offset_n=0,
         fit_exp="RANSAC", debug_plot=False, debug_data=False, plot_file=None):
   """
   Performs a detrended fluctuation analysis (DFA) on the given data
@@ -1554,7 +1554,8 @@ def dfa(data, nvals=None, overlap=True, order=1, fit_trend="poly",
     # all fluctuations are zero => we cannot fit a line
     poly = [np.nan, np.nan]
   else:
-    poly = poly_fit(np.log10(nvals), np.log10(fluctuations), 1,
+      offset = np.argmax(nvals >= offset_n)
+      poly = poly_fit(np.log10(nvals[offset:]), np.log10(fluctuations[offset:]), 1,
                     fit=fit_exp)
   if debug_plot:
     plot_reg(np.log10(nvals), np.log10(fluctuations), poly, "log10(n)",
