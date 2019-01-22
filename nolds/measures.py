@@ -1054,12 +1054,12 @@ def plot_reg(xvals, yvals, poly, x_label="x", y_label="y", data_label="data",
   """
   # local import to avoid dependency for non-debug use
   import matplotlib.pyplot as plt
-  plt.plot(xvals, yvals, "bo", label=data_label)
+  plt.plot(xvals, yvals, "b-", label=data_label)
   if not (poly is None):
-    plt.plot(xvals, np.polyval(poly, xvals), "r-", label=reg_label)
+    plt.plot(xvals, np.polyval(poly, xvals), "r--", label=reg_label)
   plt.xlabel(x_label)
   plt.ylabel(y_label)
-  plt.legend(loc="best")
+  # plt.legend(loc="best")
   if fname is None:
     plt.show()
   else:
@@ -1379,7 +1379,8 @@ def corr_dim(data, emb_dim, lag=1, rvals=None, dist=rowwise_euclidean,
   else:
     return poly[0]
 
-def dfa(data, nvals=None, overlap=True, order=1, fit_trend="poly", offset_n=0,
+def dfa(data, nvals=None, overlap=True, order=1, fit_trend="poly",
+        offset_begin=0, offset_end=None,
         fit_exp="RANSAC", debug_plot=False, debug_data=False, plot_file=None):
   """
   Performs a detrended fluctuation analysis (DFA) on the given data
@@ -1522,6 +1523,8 @@ def dfa(data, nvals=None, overlap=True, order=1, fit_trend="poly", offset_n=0,
     raise ValueError("nvals cannot be larger than the input size")
   # create the signal profile
   # (cumulative sum of deviations from the mean => "walk")
+  # if offset_end is None:
+  #     offset_end = max(nvals)
   walk = np.cumsum(data - np.mean(data))
   fluctuations = []
   for n in nvals:
@@ -1554,12 +1557,13 @@ def dfa(data, nvals=None, overlap=True, order=1, fit_trend="poly", offset_n=0,
     # all fluctuations are zero => we cannot fit a line
     poly = [np.nan, np.nan]
   else:
-      offset = np.argmax(nvals >= offset_n)
-      poly = poly_fit(np.log10(nvals[offset:]), np.log10(fluctuations[offset:]), 1,
+      offset = np.argmax(nvals >= offset_begin)
+      poly = poly_fit(np.log10(nvals[offset:offset_end]),
+                      np.log10(fluctuations[offset:offset_end]), 1,
                     fit=fit_exp)
   if debug_plot:
-    plot_reg(np.log10(nvals), np.log10(fluctuations), poly, "log10(n)",
-             "log10(std(X,n))", fname=plot_file)
+    plot_reg(np.log10(nvals), np.log10(fluctuations), poly, r"$\log{n}$",
+             r"$\log{F(n)}$", fname=plot_file)
   if debug_data:
     return (poly[0], (np.log(nvals), np.log(fluctuations), poly))
   else:
