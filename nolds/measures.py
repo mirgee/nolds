@@ -762,8 +762,7 @@ def sampen(data, emb_dim=2, tolerance=None, dist=rowwise_chebyshev,
     # successively calculate distances between each pair of template vectors
     for i in range(len(tVecsM) - 1):
       dsts = dist(tVecsM[i + 1:], tVecsM[i])
-      if debug_plot:
-        plot_data[-1].extend(dsts)
+      plot_data[-1].extend(dsts)
       # count how many distances are smaller than the tolerance
       counts[-1] += np.sum(dsts < tolerance)
   if counts[1] == 0:
